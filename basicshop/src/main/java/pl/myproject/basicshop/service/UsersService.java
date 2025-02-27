@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
+import pl.myproject.basicshop.dto.OrderItemsDTO;
 import pl.myproject.basicshop.dto.UsersDTO;
+import pl.myproject.basicshop.mapper.OrderItemsMapper;
 import pl.myproject.basicshop.mapper.UsersMapper;
 import pl.myproject.basicshop.model.Users;
 import pl.myproject.basicshop.repository.UsersRepository;
@@ -20,28 +22,21 @@ import java.util.stream.StreamSupport;
 public class UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
+    private final OrderItemsMapper orderItemsMapper;
+
     @Autowired
-    public UsersService(UsersRepository usersRepository, UsersMapper usersMapper) {
+    public UsersService(UsersRepository usersRepository, UsersMapper usersMapper, OrderItemsMapper orderItemsMapper) {
         this.usersRepository = usersRepository;
         this.usersMapper = usersMapper;
+        this.orderItemsMapper = orderItemsMapper;
     }
 
     public ResponseEntity<List<UsersDTO>> getAllUsers() {
-        Iterable<Users> users = usersRepository.findAll();
-        List<UsersDTO> usersDTOs = StreamSupport.stream(users.spliterator(), false)
-                .map(usersMapper::apply)  // Używamy metody apply z mappera
+        List<UsersDTO> usersDTOs = StreamSupport.stream(usersRepository.findAll().spliterator(),false)
+                .map(usersMapper)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(usersDTOs);
     }
-
-
-
-
-
-
-
-
-
 
     public ResponseEntity<UsersDTO> getUserById(@PathVariable Integer id) {
         return usersRepository.findById(id)

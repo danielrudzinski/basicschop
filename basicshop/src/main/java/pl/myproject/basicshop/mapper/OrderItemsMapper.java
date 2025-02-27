@@ -22,7 +22,8 @@ public class OrderItemsMapper implements Function<OrderItems, OrderItemsDTO> {
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
-                product.getPrice()
+                product.getPrice(),
+                product.getStock()
         );
 
         return new OrderItemsDTO(product.getId(), orderItem.getQuantity(), productDTO);
